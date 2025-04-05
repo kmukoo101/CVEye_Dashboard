@@ -1,0 +1,20 @@
+{
+  "auth": {
+    "admin": "chanGEMe!23",
+    "analyst": "read@nLY2025"
+  },
+  "smtp": {
+    "server": "smtp.your_email.com",
+    "port": 587,
+    "username": "your@email.com",
+    "password": "your_smtp_password"
+  },
+  "dashboard": {
+    "upload_url": "http://localhost:8501/upload",
+    "upload_token": "your_secure_api_token"
+  },
+  "defaults": {
+    "pdf_password": "seCUREpdf!23",
+    "scan_ports": "21,22,80,443,3306,8080"
+  }
+}
