@@ -1,82 +1,80 @@
-# CVEye Dashboard
+# CVEye Security Suite
 
-This is a streamlit app for analyzing, visualizing, and comparing scan data from the CVEye suite of tools:
+This is an integrated open-source toolkit designed to help cybersecurity professionals identify local risks, weak configurations, and CVEs across systems. 
 
+Tools Included:
 - CVEye-Hunter: Local recon assistant
-- CVEye: Port and CVE vulnerability scanner
-- Vendor-Risk-Analyzer: Reputation and exposure assessment
-- Compliance_Companion: Security control compliance tool
-
-This tool provides a centralized way to upload and review scan results, track historical security trends, compare scan diffs, and export encrypted reports.
+- CVEye: Vulnerability scanner with CVE detection
+- Vendor-Risk-Analyzer: Third-party risk visibility (Shodan, HIBP, etc.)
+- Compliance_Companion: Control compliance checker
+- CVEye Dashboard: Streamlit-based GUI for visualization, drilldown, and export
+- cveye_cli_scan.py: Real scanner backend for automated and GUI-triggered assessments
 
 ---
 
 ## Features
 
-- Upload and parse scan results from CVEye JSON files
-- CVE drill-down with filtering, keyword search, grouping, and CVSS metadata
-- Radar charts, heatmaps, and CVE severity trend animations
-- Enrichment via CIRCL API (optional, toggle-based)
-- Compliance summary with control pass/fail metrics
-- Tag scans by category (e.g., production, internal, API)
-- Save reports with context names
-- Automatic archival of old scans after 30 days
-- Password-protected PDF report export
-- Secure email delivery of reports via SMTP
-- Real-time scan triggering (CLI integration)
-- Role-based authentication (admin, analyst, etc.)
-- Load archived scans and compare to current ones
+- CVE detection via banner matching and port scan
+- Local recon: environment secrets, SSH audit, open ports, startup checks
+- Compliance control logic and weak user password checks
+- Banner grabbing with customizable port range
+- CVE enrichment, grouping, filtering, and drilldown
+- Secure PDF export with encryption
+- Historical scan comparison, tagging, and auto-archival
+- GUI dashboard (Streamlit) with charts and timelines
+- Real-time CLI scan trigger with result upload
+- Multi-user login with roles
+- Auto-email delivery via SMTP
+- Token-authenticated scan uploads
+- Logging and quiet/verbose CLI support
 
 ---
 
-## Getting Started
+## ⚙ Getting Started
 
-### Prerequisites
+### Requirements
 
 - Python 3.7+
-- Run:  
-  ```
-  pip install -r requirements.txt
-  ```
+- Run:
+```bash
+pip install -r requirements.txt
+```
 
-Dependencies include:
-- `streamlit`
-- `plotly`
-- `pandas`
-- `fpdf`
-- `matplotlib`
-- `seaborn`
-- `PyPDF2`
+Required packages:
+`streamlit`, `plotly`, `pandas`, `fpdf`, `matplotlib`, `seaborn`, `psutil`, `PyPDF2`, `requests`
 
 ---
 
-## Usage
+## CVEye Dashboard
 
-### 1. Start Dashboard
-
+To launch the GUI dashboard:
 ```bash
 streamlit run dashboard_app.py
 ```
 
-### 2. Login
-
-Use credentials defined in `config.json`.
+It supports:
+- JSON upload from any CVEye tool
+- CVE filtering, enrichment, risk drill-down
+- Compliance summaries
+- Radar, heatmap, and timeline visuals
+- Report export (PDF + password)
+- Email delivery via SMTP
+- Scan comparison & archive
 
 ---
 
 ## Configuration
 
-Create a file named `config.json` in your root directory.
+Create a `config.json` file:
 
 ```json
 {
   "auth": {
     "admin": "changeme123",
-    "analyst": "readonly2025",
-    "auditor": "complianceCheck"
+    "analyst": "readonly2025"
   },
   "smtp": {
-    "server": "smtp.yourmail.com",
+    "server": "smtp.example.com",
     "port": 587,
     "username": "you@example.com",
     "password": "your_smtp_password"
@@ -84,27 +82,41 @@ Create a file named `config.json` in your root directory.
 }
 ```
 
-- Add or edit users in the `"auth"` block.
-- Update SMTP settings to enable email delivery.
-- If `config.json` is missing, a default single-user login (`admin:secret`) is applied.
-
 ---
 
-## Exported Reports
+## CLI Scanner (`cveye_cli_scan.py`)
 
-- Reports are saved as PDFs, encrypted with a password if provided.
-- Old scans (30+ days) are automatically moved into a ZIP archive.
-- You can re-load archived scans and compare them with the latest scan.
-
----
-
-## Optional CLI Integration
-
-To enable live scan triggering, ensure `cveye_cli_scan.py` exists in the same directory. The dashboard can invoke this script with:
-
+Run standalone:
 ```bash
-python3 cveye_cli_scan.py -o latest_scan.json
+python cveye_cli_scan.py -o scan.json
 ```
 
-The output/results file is automatically loaded and parsed.
+With optional features:
+```bash
+python cveye_cli_scan.py \\
+  -o scan.json \\
+  --ports 21,22,80,443,3306,8080 \\
+  --token YOUR_DASHBOARD_TOKEN \\
+  --quiet
+```
+
+- `--ports`: Customize banner grabbing
+- `--token`: Send scan to dashboard endpoint
+- `--quiet`: Suppress console output (for automation)
+
+---
+
+## Report & Archive Management
+
+- Reports saved in `scan_history/` with timestamp
+- After 30 days, scans are zipped into `archived_scans.zip`
+- Archived scans are still visible and comparable in the dashboard
+
+---
+
+## Auth & Upload
+
+- CLI uploads use token-based auth (via `--token`)
+- Dashboard logins use `config.json` roles
+- PDF export supports optional password encryption
 
